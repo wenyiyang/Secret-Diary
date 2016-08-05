@@ -1,5 +1,4 @@
 // Signup page that allows users to signup, login, and recover password.
-
 // Include account.php that receives info from front end, does error checking, and connects with database.
 <?php include ("account.php");?>
 <!DOCTYPE html>
