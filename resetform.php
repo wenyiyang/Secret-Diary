@@ -42,7 +42,7 @@
         $output = mysqli_query($link, $query);
         $ID = mysqli_fetch_array($output);
         $_SESSION['id'] = $ID[0];
-        header("Location:secretdiary.php");
+        header("Location:signup.php");
         exit();
       }
       else {
