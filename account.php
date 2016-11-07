@@ -1,19 +1,12 @@
 <?php
   session_start();
-  function input_test($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-  }
-  if($_GET["logOut"] == 1 AND $_SESSION['id']) {
+  if($_GET["logOut"] == 1 AND $_SESSION[$_GET['id']]) {
     session_destroy();
     $massage = "You already logged out. Have a nice day!";
     session_start();
   }
   $email = $_GET["email"];
-  $email = input_test($email);
-  if($_GET["status"] == "expired" AND $_SESSION[$email]) {
+  if($_GET["status"] == "expired" AND $_SESSION[$email] == "false") {
     session_destroy();
     $errormassage = "The link has been expired, please reset again.";
     session_start();
@@ -21,10 +14,9 @@
   include ("connection.php");
   if($_POST["submit"] == 'reset') {
     if($_POST["Email_Reset"] == "") {
-      $errormassage .= "Please enter your email address.<br />";
-      echo $errormassage;
+      echo "Please enter your email address.<br />";
     }
-    if($errormassage == "") {
+    else if($_POST["Email_Reset"] != "") {
       $query = "SELECT Info_Email FROM Info WHERE Info_Email = '".mysqli_real_escape_string($link, $_POST["Email_Reset"])."'";
       $result = mysqli_query($link, $query);
       $result = mysqli_num_rows($result);
@@ -32,23 +24,20 @@
         echo "Cannot find that email address.<br />";
       }
       else {
-        $email = input_test($_POST["Email_Reset"]);
-        $emailTo = $email;
+        $emailTo = $_POST["Email_Reset"];
         $subject = "Password Reset";
-        $body = "Dear $email:\n\nIf you requested this password change, please click on the following link to reset your password:\nhttp://wenyiyang.net/web-application/secret-diary/reset.php?token=$email\n\nWenyi";
+        $body = "Dear $emailTo:\n\nIf you requested this password change, please click on the following link to reset your password:\nhttp://wenyiyang.net/web-application/secret-diary/reset.php?token=$emailTo\n\nWenyi";
         $emailFrom = "From: wenyiloveusc@gmail.com";
         if(mail($emailTo, $subject, $body, $emailFrom)) {
-          $_SESSION[$email] = "true";
-          $massage = "The reset link has been sent. Please check your email.<br />";
-          echo $massage;
+          $_SESSION[$emailTo] = "true";
+          echo "The reset link has been sent. Please check your email.<br />";
         }
       }
     }
   }
-  
   if($_POST["submit"] == "Sign Up") {
     if($_POST["Email"]) {
-      $email = input_test($_POST["Email"]);
+      $email = $_POST["Email"];
       if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error .= "Please enter a vaild email address.<br />";
       }
@@ -57,7 +46,7 @@
       $error .= "Please enter your email address.<br />";
     }
     if($_POST["Password"]) {
-      $password = input_test($_POST["Password"]);
+      $password = $_POST["Password"];
       if(strlen($password) < 8) {
         $error .= "The length of password should not be less than 8.<br />";
       }
@@ -68,10 +57,7 @@
     else {
       $error .= "Please enter your password.<br />";
     }
-    if($error) {
-      $error = $error;
-    }
-    else {
+    if($error == "") {
       $query = "SELECT Info_Email FROM Info WHERE Info_Email = '".mysqli_real_escape_string($link, $_POST["Email"])."'";
       $result = mysqli_query($link, $query);
       $result = mysqli_num_rows($result);
@@ -82,8 +68,12 @@
         $query = "INSERT INTO Info (Info_Email, Info_Password) VALUES ('".mysqli_real_escape_string($link, $_POST["Email"])."'".", '".md5(md5($_POST["Email"]).($_POST["Password"]))."')";
         $result = mysqli_query($link, $query);
         if($result) {
-          $_SESSION['id'] = mysqli_insert_id($link);
-          header("Location:home.php");
+          $query = "SELECT Info_ID FROM Info WHERE Info_Email = '".mysqli_real_escape_string($link, $_POST["Email"])."'";
+          $output = mysqli_query($link, $query);
+          $ID = mysqli_fetch_array($output);
+          $_SESSION["id".$ID[0]] = $ID[0];
+          $value = "id".$_SESSION["id".$ID[0]];
+          header("Location:home.php?id=$value");
           exit();
         }
         else {
@@ -92,7 +82,6 @@
       }
     }
   }
-  
   if($_POST["submit"] == "Log In") {
     if($_POST["Email_Log_In"] == "") {
       $error .= "Please enter your email address.<br />";
@@ -115,17 +104,15 @@
           $query = "SELECT Info_ID FROM Info WHERE Info_Email = '".mysqli_real_escape_string($link, $_POST["Email_Log_In"])."'";
           $output = mysqli_query($link, $query);
           $ID = mysqli_fetch_array($output);
-          $_SESSION['id'] = $ID[0];
-          header("Location:home.php");
+          $_SESSION["id".$ID[0]] = $ID[0];
+          $value = "id".$_SESSION["id".$ID[0]];
+          header("Location:home.php?id=$value");
           exit();
         }
         else {
           $error .= "That password dose not match our records. Please enter again.<br />";
         } 
       }
-    }
-    else {
-      $error = $error;
     }
   }
 ?>

@@ -1,6 +1,6 @@
 <?php 
   session_start();
-  if(!isset($_SESSION['id'])) {
+  if(!isset($_SESSION[$_GET['id']])) {
     header("Location:signup.php");
     exit();
   }
@@ -19,11 +19,12 @@
     }
     if(!isset($error)){
       $postDate = date("Y-m-d H:i:s");
-      $infoID = $_SESSION['id'];
+      $infoID = $_SESSION[$_GET['id']];
       $query = "INSERT INTO Post (Post_Title,Post_Des,Post_Con,Post_Date,Info_ID) VALUES ('".$postTitle."','".$postDesc."','".$postCont."','".$postDate."','".$infoID."')";
       $result = mysqli_query($link, $query);
       if($result) {
-        header("Location: home.php?action=added");
+        $id = $_GET['id'];
+        header("Location: home.php?action=added&id=$id");
         exit();
       }
     } 
@@ -79,14 +80,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Secret Diary</a>
+          <a class="navbar-brand" href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/home.php?id=".$_GET['id']."'";?>>Secret Diary</a>
         </div>
         <div class="collapse navbar-collapse navbar-right" id="myNavbar">
           <ul class="nav navbar-nav">
-            <li><a href="home.php">Home</a></li>
-            <li class="active"><a href="post.php">Post</a></li>
-            <li><a href="manage.php">Manage</a></li>
-            <li><a href="http://wenyiyang.net/web-application/secret-diary/signup.php?logOut=1">Log Out</a>
+            <li><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/home.php?id=".$_GET['id']."'";?>>Home</a></li>
+            <li class="active"><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/post.php?id=".$_GET['id']."'";?>>Post</a></li>
+            <li><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/manage.php?id=".$_GET['id']."'";?>>Manage</a></li>
+            <li><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/signup.php?logOut=1&id=".$_GET['id']."'";?>>Log Out</a></li>
           </ul>
         </div>
       </div>
@@ -135,4 +136,3 @@
     </script>
   </body>
 </html>
-

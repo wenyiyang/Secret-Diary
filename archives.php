@@ -1,16 +1,17 @@
 <?php 
   session_start();
-  if(!isset($_SESSION['id'])) {
+  if(!isset($_SESSION[$_GET['id']])) {
     header("Location:signup.php");
     exit();
   }
   include ("connection.php");
-  $infoID = $_SESSION['id'];
+  $infoID = $_SESSION[$_GET['id']];
   $query = "SELECT Post_ID, Post_Title, Post_Des, Post_Date FROM Post WHERE Info_ID = '".$infoID."' AND MONTH(Post_Date) = '".$_GET['month']."' AND YEAR(Post_Date) = '".$_GET['year']."'ORDER BY Post_Date DESC";
   $result = mysqli_query($link, $query);
   $flag = mysqli_fetch_array($result);
   if($flag['Post_ID'] == ''){
-    header("Location:home.php");
+    $id = $_GET['id'];
+    header("Location: home.php?id=$id");
     exit();
   }
 ?>
@@ -55,15 +56,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Secret Diary</a>
+          <a class="navbar-brand" href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/home.php?id=".$_GET['id']."'";?>>Secret Diary</a>
         </div>
         <div class="collapse navbar-collapse navbar-right" id="myNavbar">
           <ul class="nav navbar-nav">
-            <li><a href="home.php">Home</a></li>
-            <li><a href="post.php">Post</a></li>
-            <li><a href="manage.php">Manage</a></li>
-            <li><a href="http://wenyiyang.net/web-application/secret-diary/signup.php?logOut=1">Log Out</a>
-          </ul>
+            <li><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/home.php?id=".$_GET['id']."'";?>>Home</a></li>
+            <li><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/post.php?id=".$_GET['id']."'";?>>Post</a></li>
+            <li><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/manage.php?id=".$_GET['id']."'";?>>Manage</a></li>
+            <li><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/signup.php?logOut=1&id=".$_GET['id']."'";?>>Log Out</a></li>
         </div>
       </div>
     </nav>
@@ -75,10 +75,10 @@
             $result = mysqli_query($link, $query);
             while($row = mysqli_fetch_array($result)) {
               echo '<div>';
-                echo '<h1><a href="viewpost.php?id='.$row['Post_ID'].'">'.$row['Post_Title'].'</a></h1>';
-                echo '<p>Posted on '.date('jS M Y H:i:s', strtotime($row['Post_Date'])).'</p>';
+                echo '<h1><a href="viewpost.php?id='.$_GET['id'].'&postId='.$row['Post_ID'].'">'.$row['Post_Title'].'</a></h1>';
+                echo '<p>Posted on '.date('jS M Y H:i:s e', strtotime($row['Post_Date'])).'</p>';
                 echo '<p>'.$row['Post_Des'].'</p>';                
-                echo '<p><a href="viewpost.php?id='.$row['Post_ID'].'">Read More</a></p>';                
+                echo '<p><a href="viewpost.php?id='.$_GET['id'].'&postId='.$row['Post_ID'].'">Read More</a></p>';                 
               echo '</div>';
             }
           ?>

@@ -1,6 +1,6 @@
 <?php 
   session_start();
-  if(!isset($_SESSION['id'])) {
+  if(!isset($_SESSION[$_GET['id']])) {
     header("Location:signup.php");
     exit();
   }
@@ -9,10 +9,11 @@
     $postID = $_GET['delpost'];
     $query = "DELETE FROM Post WHERE Post_ID = '".$postID."'";
     $result = mysqli_query($link, $query);
-    header('Location: home.php?action=deleted');
+    $id = $_GET['id'];
+    header("Location: home.php?action=deleted&id=$id");
     exit();
   } 
-  $infoID = $_SESSION['id'];
+  $infoID = $_SESSION[$_GET['id']];
   $query ="SELECT Post_ID, Post_Title, Post_Date FROM Post WHERE Info_ID = '".$infoID."'ORDER BY Post_Date DESC";
   $result = mysqli_query($link, $query);
 ?>
@@ -57,14 +58,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Secret Diary</a>
+          <a class="navbar-brand" href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/home.php?id=".$_GET['id']."'";?>>Secret Diary</a>
         </div>
         <div class="collapse navbar-collapse navbar-right" id="myNavbar">
           <ul class="nav navbar-nav">
-            <li><a href="home.php">Home</a></li>
-            <li><a href="post.php">Post</a></li>
-            <li class="active"><a href="manage.php">Manage</a></li>
-            <li><a href="http://wenyiyang.net/web-application/secret-diary/signup.php?logOut=1">Log Out</a>
+            <li><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/home.php?id=".$_GET['id']."'";?>>Home</a></li>
+            <li><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/post.php?id=".$_GET['id']."'";?>>Post</a></li>
+            <li class="active"><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/manage.php?id=".$_GET['id']."'";?>>Manage</a></li>
+            <li><a href=<?php echo "'"."http://wenyiyang.net/web-application/secret-diary/signup.php?logOut=1&id=".$_GET['id']."'";?>>Log Out</a></li>
           </ul>
         </div>
       </div>
@@ -81,7 +82,7 @@
                 echo '<td>'.date('jS M Y', strtotime($row['Post_Date'])).'</td>';
                 ?>
                 <td>
-                    <a href="editpost.php?id=<?php echo $row['Post_ID'];?>">Edit</a> | <a href="javascript:delpost('<?php echo $row['Post_ID'];?>','<?php echo $row['Post_Title'];?>')">Delete</a>
+                    <a href="editpost.php?postId=<?php echo $row['Post_ID'];?>&id=<?php echo $_GET['id'];?>">Edit</a> | <a href="javascript:delpost('<?php echo $row['Post_ID'];?>','<?php echo $row['Post_Title'];?>','<?php echo $_GET['id'];?>')">Delete</a>
                 </td>
                 <?php 
                 echo '</tr>';
@@ -93,9 +94,9 @@
     </div>
     <script>
       $(".myContainer").css("min-height",$(window).height());
-      function delpost(id, title) {
+      function delpost(postId, title, id) {
         if (confirm("Are you sure you want to delete '" + title + "'")){
-          window.location.href = 'manage.php?delpost=' + id;
+          window.location.href = 'manage.php?id='+ id +'&delpost=' + postId;
         }
       }
     </script>

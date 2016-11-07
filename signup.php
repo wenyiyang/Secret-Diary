@@ -1,5 +1,3 @@
-// Signup page that allows users to signup, login, and recover password.
-// Include account.php that receives info from front end, does error checking, and connects with database.
 <?php include ("account.php");?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,13 +42,12 @@
     </style>
   </head>
   <body>
-     // Bootstrap model that allows users to do password recovery operation.
      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
        <div class="modal-dialog" role="document">
          <div class="modal-content">
            <div class="modal-header">
              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-             <h2>Forgot Password?</h2>
+             <h2 class="modal-title" id="myModalLabel">Forgot Password?</h2>
              <p class="marginTop bold">Please enter the email address you used to sign in.</p>
              <div id="infoBox">
              </div>
@@ -75,10 +72,9 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Secret Diary</a>
+          <a class="navbar-brand" href="signup.php">Secret Diary</a>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
-          // Login form that sends users' login info to account.php.
           <form class="navbar-form navbar-right" method="post">
             <div class="form-group">
               <input id="email_Log_In" name="Email_Log_In" value="<?php echo addslashes($_POST["Email_Log_In"]);?>" type="email" class="form-control" placeholder="Email"></input>
@@ -98,7 +94,6 @@
           <h1>Secret Diary</h1>
           <p class="lead">Create your own private diary here, wherever you go.</p>
           <p class="bold marginTop">Interested? Sign Up Below!</p>
-          // Display different types of massage.
           <?php
             if($error) {
               $error = addslashes($error);
@@ -113,7 +108,6 @@
               echo "<div class='alert alert-danger'>$errormassage</div>";
             }
           ?>
-          // Signup form that sends users' signup info to account.php.
           <form method="post">
             <div class="form-group marginTop">
               <label for="email">Email</label>
@@ -130,7 +124,7 @@
     </div>
     <script>
       $(".myContainer").css("min-height",$(window).height());
-      // Send password recovery info to back end, receive resulting data, and interact with resulting data.
+      // Send password recovery info to backend, receive resulting data, and interact with resulting data.
       $("#reset").click(function() {
         var success = "The reset link has been sent. Please check your email.<br />"
         var email = $("#reset_email").val();
@@ -147,4 +141,3 @@
     </script>
   </body>
 </html>
-
